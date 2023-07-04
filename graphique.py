@@ -17,12 +17,10 @@ l'affichage des données par le bias de Tkinter.
         Constructeur de la classe Interface Graphique.
         """
         self.tableau_a_afficher = None
-        Frame.__init__(self)
         self.bibliotheque_interface = Bibliotheque()
         self.fenetre = Tk()
         self.fenetre.geometry("820x900")
         self.fenetre.title("Gestion de livres")
-        self.cadre = Frame(self.fenetre)
 
         # Création des différents élément graphique
         self.creation_menu_barre()
