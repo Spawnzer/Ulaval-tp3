@@ -1,5 +1,5 @@
 # Un deuxième fichier graphique.py (qui importe la bibliothèque tkinter et le fichier book.py).
-
+from operator import itemgetter
 from tkinter import Tk, messagebox, NO, CENTER, ttk, Menu, Frame, filedialog
 from tkinter.simpledialog import askstring
 from tkinter.filedialog import asksaveasfile
@@ -16,6 +16,8 @@ l'affichage des données par le bias de Tkinter.
         """
         Constructeur de la classe Interface Graphique.
         """
+        self.tableau_a_afficher = None
+        self.cadre = None
         self.bibliotheque_interface = Bibliotheque()
         self.fenetre = Tk()
         self.fenetre.geometry("820x900")
@@ -73,6 +75,7 @@ l'affichage des données par le bias de Tkinter.
         :param liste_a_afficher: (list) Il s'agit d'une liste de 4 chaines de caractères représentant. Ces chaines 
         sont la cote, le titre, le nombre de pages et le prix.  
         """
+        print(liste_a_afficher)
         if self.tableau_deja_affiche:
             self.effacer()  # Afin d'enlever le tableau déjà afficher
         self.cadre = Frame(self.fenetre)  # Ça devrait être définit dans __init__ mais je ne sais pas comment faire sans
@@ -82,17 +85,21 @@ l'affichage des données par le bias de Tkinter.
         self.tableau_a_afficher['columns'] = ("cote", "titre", "nombre de pages", "prix")
         self.tableau_a_afficher.pack()
         self.tableau_a_afficher.column("#0", width=0, stretch=NO)  # Pour coller la colonne à droite
-        self.tableau_a_afficher.column("cote", anchor=CENTER)
-        self.tableau_a_afficher.column("titre", anchor=CENTER)
-        self.tableau_a_afficher.column("nombre de pages", anchor=CENTER)
-        self.tableau_a_afficher.column("prix", anchor=CENTER)
+        self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
+        for col in self.tableau_a_afficher['columns']:
+            self.tableau_a_afficher.column(col, anchor=CENTER)
+            self.tableau_a_afficher.heading(col, text=col, anchor=CENTER)
+        #self.tableau_a_afficher.column("cote", anchor=CENTER)
+        #self.tableau_a_afficher.column("titre", anchor=CENTER)
+        #self.tableau_a_afficher.column("nombre de pages", anchor=CENTER)
+        #self.tableau_a_afficher.column("prix", anchor=CENTER)
 
         # Entête du tableau
-        self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
-        self.tableau_a_afficher.heading("cote", text="Cote", anchor=CENTER)
-        self.tableau_a_afficher.heading("titre", text="Titre", anchor=CENTER)
-        self.tableau_a_afficher.heading("nombre de pages", text="Nombre de pages", anchor=CENTER)
-        self.tableau_a_afficher.heading("prix", text="Prix ($)", anchor=CENTER)
+        #self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
+        #self.tableau_a_afficher.heading("cote", text="Cote", anchor=CENTER)
+        #self.tableau_a_afficher.heading("titre", text="Titre", anchor=CENTER)
+        #self.tableau_a_afficher.heading("nombre de pages", text="Nombre de pages", anchor=CENTER)
+        #self.tableau_a_afficher.heading("prix", text="Prix ($)", anchor=CENTER)
 
         self.tableau_deja_affiche = True
 
@@ -151,9 +158,11 @@ l'affichage des données par le bias de Tkinter.
         Ses valeurs possibles sont 'cote', 'titre', 'page' et 'prix'.
         :return: À déterminer
         """
+        liste_trie = sorted(self.bibliotheque_interface.liste_des_livre, key=itemgetter(self.tableau_a_afficher['columns'].index(information_de_tri)))
 
         # TODO: Il doit y avoir une gestion des erreurs pour la précondition suivante: Les valeurs doivent faire partie
         #  des valeurs possibles.
+        self.affichage_liste_dans_tableau(liste_trie)
         print(f'Trier par {information_de_tri}')
 
     def trier_cote(self):
@@ -165,7 +174,7 @@ l'affichage des données par le bias de Tkinter.
         self.trier("titre")
 
     def trier_page(self):
-        self.trier("page")
+        self.trier("nombre de pages")
 
     def trier_prix(self):
         self.trier("prix")
