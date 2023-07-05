@@ -83,11 +83,12 @@ l'affichage des données par le bias de Tkinter.
         self.tableau_a_afficher = ttk.Treeview(self.cadre, height=30)  # Ça aussi ça devrait être définit dans __init__
         self.tableau_a_afficher['columns'] = ("cote", "titre", "nombre de pages", "prix")
         self.tableau_a_afficher.pack()
+        col_dict = {"cote": self.trier_cote, "titre":self.trier_titre, "nombre de pages":self.trier_page, "prix":self.trier_prix}
         self.tableau_a_afficher.column("#0", width=0, stretch=NO)  # Pour coller la colonne à droite
         self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
         for col in self.tableau_a_afficher['columns']:
             self.tableau_a_afficher.column(col, anchor=CENTER)
-            self.tableau_a_afficher.heading(col, text=col, anchor=CENTER)
+            self.tableau_a_afficher.heading(col, text=col, anchor=CENTER, command=col_dict[col])
         #self.tableau_a_afficher.column("cote", anchor=CENTER)
         #self.tableau_a_afficher.column("titre", anchor=CENTER)
         #self.tableau_a_afficher.column("nombre de pages", anchor=CENTER)
