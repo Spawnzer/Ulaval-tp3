@@ -25,7 +25,7 @@ l'affichage des données par le bias de Tkinter.
         # Création des différents élément graphique
         self.creation_menu_barre()
         self.tableau_deja_affiche = False
-        self.affichage_liste_dans_tableau(("", "", "", ""))  # Pour avoir un tableau vide en commencant
+        #self.affichage_liste_dans_tableau()  # Pour avoir un tableau vide en commencant
 
         self.fenetre.mainloop()
 
@@ -67,14 +67,13 @@ l'affichage des données par le bias de Tkinter.
         # Ajout du menu barre à l'interface
         self.fenetre.config(menu=menu_barre)
 
-    def affichage_liste_dans_tableau(self, liste_a_afficher):
+    def affichage_liste_dans_tableau(self):
         """
         Cette fonction prend une liste de livre et l'affiche dans le tableau de l'interface graphique
 
         :param liste_a_afficher: (list) Il s'agit d'une liste de 4 chaines de caractères représentant. Ces chaines 
         sont la cote, le titre, le nombre de pages et le prix.  
         """
-        print(liste_a_afficher)
         if self.tableau_deja_affiche:
             self.effacer()  # Afin d'enlever le tableau déjà afficher
         self.cadre = Frame(self.fenetre)  # Ça devrait être définit dans __init__ mais je ne sais pas comment faire sans
@@ -83,10 +82,10 @@ l'affichage des données par le bias de Tkinter.
         self.tableau_a_afficher = ttk.Treeview(self.cadre, height=30)  # Ça aussi ça devrait être définit dans __init__
         self.tableau_a_afficher['columns'] = ("cote", "titre", "nombre de pages", "prix")
         self.tableau_a_afficher.pack()
-        col_dict = {"cote": self.trier_cote, "titre":self.trier_titre, "nombre de pages":self.trier_page, "prix":self.trier_prix}
+        col_dict = {"cote": self.trier_cote, "titre": self.trier_titre, "nombre de pages": self.trier_page, "prix": self.trier_prix}
         self.tableau_a_afficher.column("#0", width=0, stretch=NO)  # Pour coller la colonne à droite
         self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
-        for col in self.tableau_a_afficher['columns']:
+        for col in col_dict.keys():
             self.tableau_a_afficher.column(col, anchor=CENTER)
             self.tableau_a_afficher.heading(col, text=col, anchor=CENTER, command=col_dict[col])
         #self.tableau_a_afficher.column("cote", anchor=CENTER)
@@ -105,7 +104,7 @@ l'affichage des données par le bias de Tkinter.
 
         # Remplissage du tableau
         i = 0
-        for livre in liste_a_afficher:
+        for livre in self.bibliotheque_interface.liste_des_livre:
             i += 1
             self.tableau_a_afficher.insert(parent='', index='end', iid=str(i), text='',
                                            values=livre)
@@ -116,7 +115,7 @@ l'affichage des données par le bias de Tkinter.
         """
         nom_fichier = filedialog.askopenfilename(title='Ouvrir le fichier',filetypes=[('txt', '*.txt')])
         self.bibliotheque_interface.creation_liste_a_partir_un_fichier(nom_fichier)
-        self.affichage_liste_dans_tableau(self.bibliotheque_interface.liste_des_livre)
+        self.affichage_liste_dans_tableau()
 
     def sauvegarder(self):
         """Cette fonction sert à créer un fichier à partir de la liste dans la bibliotheque.
@@ -124,7 +123,9 @@ l'affichage des données par le bias de Tkinter.
         """
         fichier_sauvergarde = asksaveasfile(initialfile='texte.txt', defaultextension=".txt", filetypes=[("All Files", "*.*"),
                                                                                           ("Text Documents", "*.txt")])
-        # TODO Écrire sauvegarder
+        for line in self.bibliotheque_interface.liste_des_livre:
+            fichier_sauvergarde.write("%s\n" % ",".join(line))
+        fichier_sauvergarde.close()
 
         print('Sauvegarder')
 
@@ -133,6 +134,7 @@ l'affichage des données par le bias de Tkinter.
         :return:
         """
         self.cadre.destroy()
+
         # TODO La liste doit être effacer de la bibliotheque mais la bibliotheque semble rester entière lorsqu'un
         #  fichier est chargé par la fonction charger(). Possiblement par la fonction création d'une liste à partir d'un
         #  fichier
@@ -162,7 +164,8 @@ l'affichage des données par le bias de Tkinter.
 
         # TODO: Il doit y avoir une gestion des erreurs pour la précondition suivante: Les valeurs doivent faire partie
         #  des valeurs possibles.
-        self.affichage_liste_dans_tableau(liste_trie)
+        self.bibliotheque_interface.liste_des_livre = liste_trie
+        self.affichage_liste_dans_tableau()
         print(f'Trier par {information_de_tri}')
 
     def trier_cote(self):
