@@ -101,7 +101,6 @@ l'affichage des données par le bias de Tkinter.
         #self.tableau_a_afficher.heading("prix", text="Prix ($)", anchor=CENTER)
 
         self.tableau_deja_affiche = True
-
         # Remplissage du tableau
         i = 0
         for livre in self.bibliotheque_interface.liste_des_livre:
@@ -114,7 +113,10 @@ l'affichage des données par le bias de Tkinter.
         selectionné et traiter et affiché sous forme de tableau dans l'interface graphique.
         """
         nom_fichier = filedialog.askopenfilename(title='Ouvrir le fichier',filetypes=[('txt', '*.txt')])
-        self.bibliotheque_interface.creation_liste_a_partir_un_fichier(nom_fichier)
+        try:
+            self.bibliotheque_interface.creation_liste_a_partir_un_fichier(nom_fichier)
+        except (IOError,Exception) as error:
+            messagebox.showerror("Erreur", error)
         self.affichage_liste_dans_tableau()
 
     def sauvegarder(self):
@@ -160,7 +162,10 @@ l'affichage des données par le bias de Tkinter.
         Ses valeurs possibles sont 'cote', 'titre', 'page' et 'prix'.
         :return: À déterminer
         """
-        liste_trie = sorted(self.bibliotheque_interface.liste_des_livre, key=itemgetter(self.tableau_a_afficher['columns'].index(information_de_tri)))
+        try:
+            liste_trie = sorted(self.bibliotheque_interface.liste_des_livre, key=itemgetter(self.tableau_a_afficher['columns'].index(information_de_tri)))
+        except RuntimeError:
+            messagebox.showerror("Erreur", "La liste fourni est invalide")
 
         # TODO: Il doit y avoir une gestion des erreurs pour la précondition suivante: Les valeurs doivent faire partie
         #  des valeurs possibles.
@@ -170,8 +175,6 @@ l'affichage des données par le bias de Tkinter.
 
     def trier_cote(self):
         self.trier("cote")
-        # TODO: S'il y avait une façon de passer les arguements directement dans le bouton du menu ça serait bien mais
-        #  j'ai pas trouvé comment. Même chose pour les autres trier et rechercher.
 
     def trier_titre(self):
         self.trier("titre")
