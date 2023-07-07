@@ -6,29 +6,42 @@ class Bibliotheque:
     """ Cette classe emmagasine les différents livres, une instance de la bibliothèque permet de générer des listes
     triées en fonction ou les réponses aux demandes de recherche de livre.
     """
+
     def __init__(self):
         self.name = "Bibliothèque"
         self.liste_des_livre = []
         self.liste_des_livre_a_afficher = []
 
+    def valider_prix_et_page(self, data):
+        if data.isdigit() and int(data) > 0:
+            return 1
+        return 0
+
     def creation_liste_a_partir_un_fichier(self, nom_du_fichier):
-        try:
-            f = open(nom_du_fichier, "r")
-            liste_lignes = f.readlines()
-            f.close()
-            for line in liste_lignes:
-                line = line.split(",")
-                line[3] = line[3].rstrip("\n")
-                if line not in self.liste_des_livre:
-                    self.liste_des_livre.append(line)
-        except IOError:
-            print("Le fichier", nom_du_fichier, "est introuvable.")
+        f = open(nom_du_fichier, "r")
+        liste_lignes = f.readlines()
+        f.close()
+        erreur = ["Nombre de pages", "Prix"]
+        for line in liste_lignes:
+            if line.count(',') != 3:
+                raise Exception("Erreur, le bon format est \"Cote,Titre,Page,Prix\"")
+            line = line.split(",")
+            line[3] = line[3].rstrip("\n")
+            if (self.valider_prix_et_page(line[2])) or (self.valider_prix_et_page(line[3])):
+                raise Exception(
+                    "Erreur, le " + erreur[self.valider_prix_et_page(line[2])] + " doit etre un nombre positif")
+            if line not in self.liste_des_livre:
+                self.liste_des_livre.append(line)
+
+    def supprimer_liste(self):
+        self.liste_des_livre = []
 
 
 class Livre:
     """
 Cette classe emmagasine les informations sur livre. 
     """
+
     def __init__(self, liste_info_livre):
         """ Constructeur de la classe livre
         :param liste_info_livre: (list) Une liste d'information ayant le format suivant ('cote', 'titre', 'nombre de
