@@ -193,6 +193,9 @@ l'affichage des données par le bias de Tkinter.
         """
         recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
                                                                               + information_de_recherche))
+        for line in self.bibliotheque_interface.liste_des_livre:
+            if recherche in line:
+                messagebox.showinfo(title="Resultat", message=line)
 
         #  TODO Compléter cette fonction
         #  TODO S'assurer de la gestion des exceptions
