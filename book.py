@@ -30,6 +30,8 @@ class Bibliotheque:
             if (not self.valider_prix_et_page(line[2])) or (not self.valider_prix_et_page(line[3])):
                 raise Exception(
                     "Erreur, le " + erreur[self.valider_prix_et_page(line[2])] + " doit etre un nombre positif")
+            line[2] = int(line[2])
+            line[3] = int(line[3])
             if line not in self.liste_des_livre:
                 self.liste_des_livre.append(line)
 

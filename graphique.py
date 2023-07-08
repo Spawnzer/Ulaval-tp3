@@ -75,7 +75,7 @@ l'affichage des données par le bias de Tkinter.
         sont la cote, le titre, le nombre de pages et le prix.  
         """
         if self.tableau_deja_affiche:
-            self.effacer()  # Afin d'enlever le tableau déjà afficher
+            self.effacer_affichage()  # Afin d'enlever le tableau déjà afficher
         self.cadre = Frame(self.fenetre)  # Ça devrait être définit dans __init__ mais je ne sais pas comment faire sans
         # que ça bogue
         self.cadre.pack()
@@ -130,6 +130,10 @@ l'affichage des données par le bias de Tkinter.
         fichier_sauvergarde.close()
 
         print('Sauvegarder')
+
+    def effacer_affichage(self):
+        self.cadre.destroy()
+        self.tableau_deja_affiche = False
 
     def effacer(self):
         """Cette fonction sert à effacer le tableau qui est affiché dans l'interface graphique.
@@ -199,7 +203,8 @@ l'affichage des données par le bias de Tkinter.
         for line in self.bibliotheque_interface.liste_des_livre:
             if recherche.upper() in line[self.tableau_a_afficher['columns'].index(information_de_recherche)]:
                 messagebox.showinfo(title="Recherche", message=line)
-
+                return 0
+        messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
         #  TODO Compléter cette fonction
         #  TODO S'assurer de la gestion des exceptions
 
