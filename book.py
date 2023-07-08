@@ -24,10 +24,10 @@ class Bibliotheque:
         erreur = ["Nombre de pages", "Prix"]
         for line in liste_lignes:
             if line.count(',') != 3:
-                raise Exception("Erreur, le bon format est \"Cote,Titre,Page,Prix\"")
+                raise Exception("Erreur, le bon format est \"Cote,Titre,Page,Prix(X.XX$)\"")
             line = line.split(",")
             line[3] = line[3].rstrip("\n")
-            if (self.valider_prix_et_page(line[2])) or (self.valider_prix_et_page(line[3])):
+            if (not self.valider_prix_et_page(line[2])) or (not self.valider_prix_et_page(line[3])):
                 raise Exception(
                     "Erreur, le " + erreur[self.valider_prix_et_page(line[2])] + " doit etre un nombre positif")
             if line not in self.liste_des_livre:

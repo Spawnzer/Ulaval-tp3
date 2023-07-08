@@ -197,6 +197,7 @@ l'affichage des données par le bias de Tkinter.
             if recherche in line:
                 messagebox.showinfo(title="Resultat", message=line)
 
+
         #  TODO Compléter cette fonction
         #  TODO S'assurer de la gestion des exceptions
 
