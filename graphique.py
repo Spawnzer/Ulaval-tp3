@@ -126,6 +126,8 @@ l'affichage des données par le bias de Tkinter.
         fichier_sauvergarde = asksaveasfile(initialfile='texte.txt', defaultextension=".txt", filetypes=[("All Files", "*.*"),
                                                                                           ("Text Documents", "*.txt")])
         for line in self.bibliotheque_interface.liste_des_livre:
+            line[2] = str(line[2])
+            line[3] = str(line[3])
             fichier_sauvergarde.write("%s\n" % ",".join(line))
         fichier_sauvergarde.close()
 
@@ -199,10 +201,11 @@ l'affichage des données par le bias de Tkinter.
         """
         recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
                                                                               + information_de_recherche))
-
+        res=""
         for line in self.bibliotheque_interface.liste_des_livre:
             if recherche.upper() in line[self.tableau_a_afficher['columns'].index(information_de_recherche)]:
-                messagebox.showinfo(title="Recherche", message=line)
+                res = line[0] + " " + line[1] + " " + str(line[2]) + " " + str(line[3])
+                messagebox.showinfo(title="Recherche", message=res)
                 return 0
         messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
         #  TODO Compléter cette fonction
