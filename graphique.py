@@ -135,7 +135,9 @@ l'affichage des données par le bias de Tkinter.
         """Cette fonction sert à effacer le tableau qui est affiché dans l'interface graphique.
         :return:
         """
+        self.bibliotheque_interface.liste_des_livre.clear()
         self.cadre.destroy()
+        self.tableau_deja_affiche = False
 
         # TODO La liste doit être effacer de la bibliotheque mais la bibliotheque semble rester entière lorsqu'un
         #  fichier est chargé par la fonction charger(). Possiblement par la fonction création d'une liste à partir d'un
