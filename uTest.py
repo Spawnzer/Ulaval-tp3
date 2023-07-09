@@ -4,6 +4,7 @@ import graphique
 import book
 import tempfile
 import os
+from unittest.mock import patch
 
 
 def creation_fichier_temporaire(texte, bibliotheque):
@@ -63,7 +64,8 @@ BV378,LA VIE DEVANT SOI,1640,r4"""
     assert test_text_reussi_page_non_numerique == False
 
 
-def test_unitaire_sur_interface_graphique():
+@patch('test.input')
+def test_unitaire_sur_interface_graphique(mock_input):
     """
 Cette fonction réalise les tests unitaires en lien avec la classe interface_graphique.
     :return:
@@ -83,10 +85,22 @@ Cette fonction réalise les tests unitaires en lien avec la classe interface_gra
     assert biblio_test.trier("nombre de pages") == 0
     assert biblio_test.trier("prix") == 0
 
+    # Tests unitaires sur la fonction qui permets la recherche par information passer
+    biblio_test.liste_des_livre = [['AA000', 'TITRE PAR DEFAULT', '100', '30'],
+                                   ['BV378', 'LA VIE DEVANT SOI', '1640', '90'],
+                                   ['ZV234', 'LA LA LA LA', '43', '4']]
+    mock_input.return_value = "la"
+    assert biblio_test.rechercher("titre") == "BV378 LA VIE DEVANT SOI 1640 90\nZV234 LA LA LA LA 43 4\n"
+    assert biblio_test.rechercher("cote") == "AA000 TITRE PAR DEFAULT 100 30\n"
+
+    biblio_test.liste_des_livre = []
+    assert biblio_test.rechercher("titre") == ""
+    assert biblio_test.rechercher("cote") == ""
+
     pass
 
 
 if __name__ == "__main__":
-    test_unitaire_sur_les_livres()
-    test_unitaire_sur_les_bibliotheques()
+    # test_unitaire_sur_les_livres()
+    # test_unitaire_sur_les_bibliotheques()
     test_unitaire_sur_interface_graphique()

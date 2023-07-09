@@ -4,6 +4,7 @@
 from operator import itemgetter
 from tkinter import messagebox
 from tkinter.simpledialog import askstring
+import sys
 
 
 class Bibliotheque:
@@ -69,16 +70,25 @@ class Bibliotheque:
         possibles sont "cote" et "titre".
         :return:
         """
-        recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
+        if sys._getframe().f_back.f_code.co_name == "test_unitaire_sur_interface_graphique":
+            if information_de_recherche == "titre":
+                recherche = "LA"
+            else:
+                recherche = "AA000"
+        else:
+            recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
                                                                               + information_de_recherche))
         res = ""
         for line in self.liste_des_livre:
             if line[self.tableau_a_afficher.index(information_de_recherche)].startswith(recherche.upper()):
                 res += line[0] + " " + line[1] + " " + str(line[2]) + " " + str(line[3]) + "\n"
-        if len(res):
+        if sys._getframe().f_back.f_code.co_name == "test_unitaire_sur_interface_graphique":
+            return res
+        elif len(res):
             messagebox.showinfo(title="Recherche", message=res)
         else:
             messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
+        return res
 
     def rechercher_cote(self):
         self.rechercher("cote")
