@@ -1,7 +1,6 @@
 # Un deuxième fichier graphique.py (qui importe la bibliothèque tkinter et le fichier book.py).
 from operator import itemgetter
 from tkinter import Tk, messagebox, NO, CENTER, ttk, Menu, Frame, filedialog
-from tkinter.simpledialog import askstring
 from tkinter.filedialog import asksaveasfile
 from book import Livre, Bibliotheque
 
@@ -16,6 +15,7 @@ l'affichage des données par le bias de Tkinter.
         """
         Constructeur de la classe Interface Graphique.
         """
+        self.cadre = None
         self.tableau_a_afficher = None
         self.bibliotheque_interface = Bibliotheque()
         self.fenetre = Tk()
@@ -55,8 +55,8 @@ l'affichage des données par le bias de Tkinter.
 
         # Menu Rechercher
         menu_rechercher = Menu(menu_barre, tearoff=0)
-        menu_rechercher.add_command(label="Cote", command=self.rechercher_cote)
-        menu_rechercher.add_command(label="Titre", command=self.rechercher_titre)
+        menu_rechercher.add_command(label="Cote", command=self.bibliotheque_interface.rechercher_cote)
+        menu_rechercher.add_command(label="Titre", command=self.bibliotheque_interface.rechercher_titre)
         menu_barre.add_cascade(label="Rechercher", menu=menu_rechercher)
 
         # Menu Aide
@@ -82,7 +82,8 @@ l'affichage des données par le bias de Tkinter.
         self.tableau_a_afficher = ttk.Treeview(self.cadre, height=30)  # Ça aussi ça devrait être définit dans __init__
         self.tableau_a_afficher['columns'] = ("cote", "titre", "nombre de pages", "prix")
         self.tableau_a_afficher.pack()
-        col_dict = {"cote": self.trier_cote, "titre": self.trier_titre, "nombre de pages": self.trier_page, "prix": self.trier_prix}
+        col_dict = {"cote": self.trier_cote, "titre": self.trier_titre,
+                    "nombre de pages": self.trier_page, "prix": self.trier_prix}
         self.tableau_a_afficher.column("#0", width=0, stretch=NO)  # Pour coller la colonne à droite
         self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
         for col in col_dict.keys():
@@ -148,7 +149,21 @@ l'affichage des données par le bias de Tkinter.
         # TODO La liste doit être effacer de la bibliotheque mais la bibliotheque semble rester entière lorsqu'un
         #  fichier est chargé par la fonction charger(). Possiblement par la fonction création d'une liste à partir d'un
         #  fichier
+    def trier_cote(self):
+        self.bibliotheque_interface.trier("cote")
+        self.affichage_liste_dans_tableau()
 
+    def trier_titre(self):
+        self.bibliotheque_interface.trier("titre")
+        self.affichage_liste_dans_tableau()
+
+    def trier_page(self):
+        self.bibliotheque_interface.trier("nombre de pages")
+        self.affichage_liste_dans_tableau()
+
+    def trier_prix(self):
+        self.bibliotheque_interface.trier("prix")
+        self.affichage_liste_dans_tableau()
     def aide(self):
         """Cette fonction affiche une section à propos contenant des informations sur le programme.
         :return:
@@ -164,58 +179,7 @@ l'affichage des données par le bias de Tkinter.
         """
         messagebox.showinfo(title="À propos", message=info)
 
-    def trier(self, information_de_tri):
-        """Cette fonction trie la liste de livre afficher selon le critère passé dans la fonction (ex. La cote du livre).
-        :param information_de_tri: (string) La valeur selon laquel on veut trier. Il s'agit d'une chaine de caractère.
-        Ses valeurs possibles sont 'cote', 'titre', 'page' et 'prix'.
-        :return: À déterminer
-        """
-        try:
-            liste_trie = sorted(self.bibliotheque_interface.liste_des_livre, key=itemgetter(self.tableau_a_afficher['columns'].index(information_de_tri)))
-        except RuntimeError:
-            messagebox.showerror("Erreur", "La liste fourni est invalide")
 
-        # TODO: Il doit y avoir une gestion des erreurs pour la précondition suivante: Les valeurs doivent faire partie
-        #  des valeurs possibles.
-        self.bibliotheque_interface.liste_des_livre = liste_trie
-        self.affichage_liste_dans_tableau()
-        print(f'Trier par {information_de_tri}')
-
-    def trier_cote(self):
-        self.trier("cote")
-
-    def trier_titre(self):
-        self.trier("titre")
-
-    def trier_page(self):
-        self.trier("nombre de pages")
-
-    def trier_prix(self):
-        self.trier("prix")
-
-    def rechercher(self, information_de_recherche):
-        """ Cette fonction ouvrir un boite de dialogue pour que l'utilisateur entre l'information qu'il cherche.
-        :param information_de_recherche: (str). Indique quel information sera utilisée pour la recherche. Les valeurs
-        possibles sont "cote" et "titre".
-        :return:
-        """
-        recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
-                                                                              + information_de_recherche))
-        res=""
-        for line in self.bibliotheque_interface.liste_des_livre:
-            if recherche.upper() in line[self.tableau_a_afficher['columns'].index(information_de_recherche)]:
-                res = line[0] + " " + line[1] + " " + str(line[2]) + " " + str(line[3])
-                messagebox.showinfo(title="Recherche", message=res)
-                return 0
-        messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
-        #  TODO Compléter cette fonction
-        #  TODO S'assurer de la gestion des exceptions
-
-    def rechercher_cote(self):
-        self.rechercher("cote")
-
-    def rechercher_titre(self):
-        self.rechercher("titre")
 
 
 if __name__ == '__main__':

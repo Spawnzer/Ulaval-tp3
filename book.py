@@ -1,7 +1,9 @@
 # Un fichier book.py qui doit contenir les fonctions qui permettent les manipulations de chaque option demandée
 # (sans l’affichage). Pour mieux gérer votre code proprement, je vous propose de créer 2 classes, une pour la
 # définition d’une structure d’un livre et l’autre pour la gestion de livres.
-
+from operator import itemgetter
+from tkinter import messagebox
+from tkinter.simpledialog import askstring
 class Bibliotheque:
     """ Cette classe emmagasine les différents livres, une instance de la bibliothèque permet de générer des listes
     triées en fonction ou les réponses aux demandes de recherche de livre.
@@ -11,6 +13,8 @@ class Bibliotheque:
         self.name = "Bibliothèque"
         self.liste_des_livre = []
         self.liste_des_livre_a_afficher = []
+        self.tableau_a_afficher  = ["cote", "titre", "nombre de pages", "prix"]
+
 
     def valider_prix_et_page(self, data):
         if data.isdigit() and int(data) > 0:
@@ -38,6 +42,46 @@ class Bibliotheque:
     def supprimer_liste(self):
         self.liste_des_livre = []
 
+    def trier(self, information_de_tri):
+        """Cette fonction trie la liste de livre afficher selon le critère passé dans la fonction (ex. La cote du livre).
+        :param information_de_tri: (string) La valeur selon laquel on veut trier. Il s'agit d'une chaine de caractère.
+        Ses valeurs possibles sont 'cote', 'titre', 'page' et 'prix'.
+        :return: À déterminer
+        """
+        try:
+            liste_trie = sorted(self.liste_des_livre, key=itemgetter(self.tableau_a_afficher.index(information_de_tri)))
+        except RuntimeError:
+            messagebox.showerror("Erreur", "La liste fourni est invalide")
+
+        # TODO: Il doit y avoir une gestion des erreurs pour la précondition suivante: Les valeurs doivent faire partie
+        #  des valeurs possibles.
+        self.liste_des_livre = liste_trie
+        if liste_trie[0]:
+            return liste_trie[0]
+        print(f'Trier par {information_de_tri}')
+
+    def rechercher(self, information_de_recherche):
+        """ Cette fonction ouvrir un boite de dialogue pour que l'utilisateur entre l'information qu'il cherche.
+        :param information_de_recherche: (str). Indique quel information sera utilisée pour la recherche. Les valeurs
+        possibles sont "cote" et "titre".
+        :return:
+        """
+        recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
+                                                                              + information_de_recherche))
+        for line in self.liste_des_livre:
+            if recherche.upper() in line[self.tableau_a_afficher.index(information_de_recherche)]:
+                res = line[0] + " " + line[1] + " " + str(line[2]) + " " + str(line[3])
+                messagebox.showinfo(title="Recherche", message=res)
+                return 0
+        messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
+        #  TODO Compléter cette fonction
+        #  TODO S'assurer de la gestion des exceptions
+
+    def rechercher_cote(self):
+        self.rechercher("cote")
+
+    def rechercher_titre(self):
+        self.rechercher("titre")
 
 class Livre:
     """
@@ -117,7 +161,6 @@ Prix: {self.prix}"""
         :return: Prix (Str): Le prix du livre.
         """
         return self.prix
-
 
 if __name__ == '__main__':
     liste_lotr = ("AA1043", "Le seigneur des anneaux", "9999", "60$")
