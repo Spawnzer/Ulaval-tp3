@@ -5,13 +5,15 @@ import book
 import tempfile
 import os
 
-def creation_fichier_temporaire (texte, bibliotheque):
+
+def creation_fichier_temporaire(texte, bibliotheque):
     fichier_temporaire = tempfile.NamedTemporaryFile()
     fichier_temporaire.write(texte)
     fichier_temporaire.seek(os.SEEK_SET)
     nom_fichier_temporaire = str(fichier_temporaire.name)
     bibliotheque.creation_liste_a_partir_un_fichier(nom_fichier_temporaire)
     fichier_temporaire.close()
+
 
 def test_unitaire_sur_les_bibliotheques():
     """
@@ -38,20 +40,21 @@ BV378,LA VIE DEVANT SOI,1640,90"""
 BV378,LA VIE DEVANT SOI,1640,90"""
     texte_page_non_numerique = b"""AA000,TITRE PAR DEFAULT,100,a
 BV378,LA VIE DEVANT SOI,1640,r4"""
-# Test fonctionnement normal de la création d'une liste
+    # Test fonctionnement normal de la création d'une liste
     creation_fichier_temporaire(texte_normal, biblio_test)
-    assert biblio_test.liste_des_livre == [['AA000', 'TITRE PAR DEFAULT', '100', '30'], ['BV378', 'LA VIE DEVANT SOI',
-     '1640', '90']]
-# Test avec des informations manquantes
+    assert biblio_test.get_liste_de_livre() == [['AA000', 'TITRE PAR DEFAULT', '100', '30'],
+                                                ['BV378', 'LA VIE DEVANT SOI',
+                                                 '1640', '90']]
+    # Test avec des informations manquantes
     test_text_reussi_info_manquant = True
     try:
         creation_fichier_temporaire(texte_info_manquante, biblio_test)
     except:
-        test_text_reussi_info_manquant  = False
+        test_text_reussi_info_manquant = False
 
     assert test_text_reussi_info_manquant == False
 
-# Test avec un nombre de page non numérique
+    # Test avec un nombre de page non numérique
     test_text_reussi_page_non_numerique = True
     try:
         creation_fichier_temporaire(texte_page_non_numerique, biblio_test)
@@ -65,24 +68,25 @@ def test_unitaire_sur_interface_graphique():
 Cette fonction réalise les tests unitaires en lien avec la classe interface_graphique.
     :return:
     """
-    # Tests unitaires sur la fonction qui permet le tri par cote
+    # Tests unitaires sur la fonction qui permets le tri par information passer
     biblio_test = book.Bibliotheque()
-    texte_normal = b"""AA000,TITRE PAR DEFAULT,100,30
-    BV378,LA VIE DEVANT SOI,1640,1"""
+    biblio_test.liste_des_livre = [['AA000', 'TITRE PAR DEFAULT', '100', '30'],
+                                   ['BV378', 'LA VIE DEVANT SOI', '1640', '90']]
+    assert biblio_test.trier("cote") == ['AA000', 'TITRE PAR DEFAULT', '100', '30']
+    assert biblio_test.trier("titre") == ['BV378', 'LA VIE DEVANT SOI', '1640', '90']
+    assert biblio_test.trier("nombre de pages") == ['AA000', 'TITRE PAR DEFAULT', '100', '30']
+    assert biblio_test.trier("prix") == ['AA000', 'TITRE PAR DEFAULT', '100', '30']
 
-    creation_fichier_temporaire(texte_normal, biblio_test)
-    print(biblio_test.trier("nombre de pages"))
-    #assert biblio_test.trier("titre") == ['    BV378', 'LA VIE DEVANT SOI', 1640, 90]
+    biblio_test.liste_des_livre = []
+    assert biblio_test.trier("cote") == 0
+    assert biblio_test.trier("titre") == 0
+    assert biblio_test.trier("nombre de pages") == 0
+    assert biblio_test.trier("prix") == 0
 
-    # Tests unitaires sur la fonction qui permet le tri par nom
-    # Tests unitaires sur la fonction qui permet le tri par prix
-    # Tests unitaires sur la fonction qui permet le tri par nombre de page
-    # Tests unitaires sur la fonction qui permet la recherche par nom
-    # Tests unitaires sur la fonction qui permet la recherche par cote
     pass
 
 
 if __name__ == "__main__":
-    #test_unitaire_sur_les_livres()
-    #test_unitaire_sur_les_bibliotheques()
+    test_unitaire_sur_les_livres()
+    test_unitaire_sur_les_bibliotheques()
     test_unitaire_sur_interface_graphique()

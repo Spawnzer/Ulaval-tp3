@@ -25,7 +25,7 @@ l'affichage des données par le bias de Tkinter.
         # Création des différents élément graphique
         self.creation_menu_barre()
         self.tableau_deja_affiche = False
-        #self.affichage_liste_dans_tableau()  # Pour avoir un tableau vide en commencant
+        self.affichage_liste_dans_tableau()  # Pour avoir un tableau vide en commencant
 
         self.fenetre.mainloop()
 
@@ -89,17 +89,6 @@ l'affichage des données par le bias de Tkinter.
         for col in col_dict.keys():
             self.tableau_a_afficher.column(col, anchor=CENTER)
             self.tableau_a_afficher.heading(col, text=col, anchor=CENTER, command=col_dict[col])
-        #self.tableau_a_afficher.column("cote", anchor=CENTER)
-        #self.tableau_a_afficher.column("titre", anchor=CENTER)
-        #self.tableau_a_afficher.column("nombre de pages", anchor=CENTER)
-        #self.tableau_a_afficher.column("prix", anchor=CENTER)
-
-        # Entête du tableau
-        #self.tableau_a_afficher.heading("#0", text="", anchor=CENTER)
-        #self.tableau_a_afficher.heading("cote", text="Cote", anchor=CENTER)
-        #self.tableau_a_afficher.heading("titre", text="Titre", anchor=CENTER)
-        #self.tableau_a_afficher.heading("nombre de pages", text="Nombre de pages", anchor=CENTER)
-        #self.tableau_a_afficher.heading("prix", text="Prix ($)", anchor=CENTER)
 
         self.tableau_deja_affiche = True
         # Remplissage du tableau
@@ -113,10 +102,10 @@ l'affichage des données par le bias de Tkinter.
         """Cette fonction sert à ouvrir un boite de dialogue pour aller selectionner un fichier à ouvrir. Le fichier
         selectionné et traiter et affiché sous forme de tableau dans l'interface graphique.
         """
-        nom_fichier = filedialog.askopenfilename(title='Ouvrir le fichier',filetypes=[('txt', '*.txt')])
+        nom_fichier = filedialog.askopenfilename(title='Ouvrir le fichier', filetypes=[('txt', '*.txt')])
         try:
             self.bibliotheque_interface.creation_liste_a_partir_un_fichier(nom_fichier)
-        except (IOError,Exception) as error:
+        except (IOError, Exception) as error:
             messagebox.showerror("Erreur", error)
         self.affichage_liste_dans_tableau()
 
@@ -124,8 +113,9 @@ l'affichage des données par le bias de Tkinter.
         """Cette fonction sert à créer un fichier à partir de la liste dans la bibliotheque.
         :return:
         """
-        fichier_sauvergarde = asksaveasfile(initialfile='texte.txt', defaultextension=".txt", filetypes=[("All Files", "*.*"),
-                                                                                          ("Text Documents", "*.txt")])
+        fichier_sauvergarde = asksaveasfile(initialfile='texte.txt', defaultextension=".txt",
+                                            filetypes=[("All Files", "*.*"),
+                                                       ("Text Documents", "*.txt")])
         for line in self.bibliotheque_interface.liste_des_livre:
             line[2] = str(line[2])
             line[3] = str(line[3])
@@ -149,6 +139,7 @@ l'affichage des données par le bias de Tkinter.
         # TODO La liste doit être effacer de la bibliotheque mais la bibliotheque semble rester entière lorsqu'un
         #  fichier est chargé par la fonction charger(). Possiblement par la fonction création d'une liste à partir d'un
         #  fichier
+
     def trier_cote(self):
         self.bibliotheque_interface.trier("cote")
         self.affichage_liste_dans_tableau()
@@ -164,6 +155,7 @@ l'affichage des données par le bias de Tkinter.
     def trier_prix(self):
         self.bibliotheque_interface.trier("prix")
         self.affichage_liste_dans_tableau()
+
     def aide(self):
         """Cette fonction affiche une section à propos contenant des informations sur le programme.
         :return:
@@ -178,8 +170,6 @@ l'affichage des données par le bias de Tkinter.
         Alexandre Dubeau et Gabriel Lecompte 
         """
         messagebox.showinfo(title="À propos", message=info)
-
-
 
 
 if __name__ == '__main__':

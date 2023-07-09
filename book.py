@@ -4,6 +4,8 @@
 from operator import itemgetter
 from tkinter import messagebox
 from tkinter.simpledialog import askstring
+
+
 class Bibliotheque:
     """ Cette classe emmagasine les différents livres, une instance de la bibliothèque permet de générer des listes
     triées en fonction ou les réponses aux demandes de recherche de livre.
@@ -13,8 +15,7 @@ class Bibliotheque:
         self.name = "Bibliothèque"
         self.liste_des_livre = []
         self.liste_des_livre_a_afficher = []
-        self.tableau_a_afficher  = ["cote", "titre", "nombre de pages", "prix"]
-
+        self.tableau_a_afficher = ["cote", "titre", "nombre de pages", "prix"]
 
     def valider_prix_et_page(self, data):
         if data.isdigit() and int(data) > 0:
@@ -48,6 +49,8 @@ class Bibliotheque:
         Ses valeurs possibles sont 'cote', 'titre', 'page' et 'prix'.
         :return: À déterminer
         """
+        if len(self.liste_des_livre) == 0:
+            return 0
         try:
             liste_trie = sorted(self.liste_des_livre, key=itemgetter(self.tableau_a_afficher.index(information_de_tri)))
         except RuntimeError:
@@ -56,7 +59,7 @@ class Bibliotheque:
         # TODO: Il doit y avoir une gestion des erreurs pour la précondition suivante: Les valeurs doivent faire partie
         #  des valeurs possibles.
         self.liste_des_livre = liste_trie
-        if liste_trie[0]:
+        if len(liste_trie):
             return liste_trie[0]
         print(f'Trier par {information_de_tri}')
 
@@ -68,20 +71,24 @@ class Bibliotheque:
         """
         recherche = askstring(("Recherche par " + information_de_recherche), ("Veuillez entrer votre "
                                                                               + information_de_recherche))
+        res = ""
         for line in self.liste_des_livre:
-            if recherche.upper() in line[self.tableau_a_afficher.index(information_de_recherche)]:
-                res = line[0] + " " + line[1] + " " + str(line[2]) + " " + str(line[3])
-                messagebox.showinfo(title="Recherche", message=res)
-                return 0
-        messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
-        #  TODO Compléter cette fonction
-        #  TODO S'assurer de la gestion des exceptions
+            if line[self.tableau_a_afficher.index(information_de_recherche)].startswith(recherche.upper()):
+                res += line[0] + " " + line[1] + " " + str(line[2]) + " " + str(line[3]) + "\n"
+        if len(res):
+            messagebox.showinfo(title="Recherche", message=res)
+        else:
+            messagebox.showerror(title="Erreur", message=information_de_recherche + " " + recherche + " introuvable")
 
     def rechercher_cote(self):
         self.rechercher("cote")
 
     def rechercher_titre(self):
         self.rechercher("titre")
+
+    def get_liste_de_livre(self):
+        return self.liste_des_livre
+
 
 class Livre:
     """
@@ -161,6 +168,7 @@ Prix: {self.prix}"""
         :return: Prix (Str): Le prix du livre.
         """
         return self.prix
+
 
 if __name__ == '__main__':
     liste_lotr = ("AA1043", "Le seigneur des anneaux", "9999", "60$")
